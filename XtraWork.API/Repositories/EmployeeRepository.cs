@@ -15,6 +15,7 @@ namespace XtraWork.API.Repositories
         public async Task<List<Employee>> GetAll()
         {
             return await _context.Employees
+                .Include(x => x.Title)
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)
                 .ToListAsync();
@@ -22,12 +23,15 @@ namespace XtraWork.API.Repositories
 
         public async Task<Employee> Get(Guid id)
         {
-            return await _context.Employees.FindAsync(id);
+            return await _context.Employees
+                .Include(x => x.Title)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<List<Employee>> Search(string keyword)
         {
             return await _context.Employees
+                .Include(x => x.Title)
                 .Where(x => x.FirstName.Contains(keyword) || x.LastName.Contains(keyword))
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)
