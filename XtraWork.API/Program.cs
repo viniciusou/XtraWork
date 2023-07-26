@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using XtraWork.API.Extensions;
 using XtraWork.API.Repositories;
 using XtraWork.API.Services;
 
@@ -12,10 +13,15 @@ builder.Services.AddDbContext<XtraWorkContext>(options => options.UseSqlServer(c
 // Add services to the container.
 builder.Services.AddScoped<TitleRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
+builder.Services.AddScoped<ProductRepository>();
 
 builder.Services.AddScoped<TitleService>();
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.Decorate<IProductService, CachedProductService>();
 
+
+builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -26,7 +32,8 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var context = scope.ServiceProvider.GetRequiredService<XtraWorkContext>();
-context.Database.EnsureCreated();
+if (await context.Database.EnsureCreatedAsync())
+    await context.GenerateProducts(1000);
 
 app.UseExceptionHandler(options => 
 {
