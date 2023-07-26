@@ -23,6 +23,8 @@ namespace XtraWork.API.Services
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
+                BirthDate = employee.BirthDate,
+                Gender = employee.Gender,
                 TitleId = employee.TitleId,
                 TitleDescription = employee.Title.Description
             }).ToList();
@@ -39,6 +41,8 @@ namespace XtraWork.API.Services
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
+                BirthDate = employee.BirthDate,
+                Gender = employee.Gender,
                 TitleId = employee.TitleId,
                 TitleDescription = employee.Title.Description
             };
@@ -55,6 +59,8 @@ namespace XtraWork.API.Services
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
+                BirthDate = employee.BirthDate,
+                Gender = employee.Gender,
                 TitleId = employee.TitleId,
                 TitleDescription = employee.Title.Description
 

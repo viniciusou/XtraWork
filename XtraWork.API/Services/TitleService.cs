@@ -18,6 +18,9 @@ namespace XtraWork.API.Services
         {
             var title = await _titleRepository.Get(id);
 
+            if (title == null)
+                return null;
+
             var response = new TitleResponse
             {
                 Id = title.Id,
