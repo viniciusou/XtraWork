@@ -1,0 +1,36 @@
+services:
+  xtraworkdb:
+      image: mcr.microsoft.com/mssql/server:2022-latest
+      container_name: xtraworkdb
+      networks:
+        - xtraworknet
+      ports:
+        - "1433:1433"
+      environment:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Str0ngPassw0rd!
+          MSSQL_PID: Express
+      healthcheck:
+        test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-Usa", "-PStr0ngPassw0rd!", "-Q", "select 1"]
+        interval: 1s
+        retries: 20
+
+  api:
+      build: .
+      container_name: xtraworkapi
+      networks:
+        - xtraworknet
+      ports:
+        - "4221:80"
+      depends_on:
+        xtraworkdb:
+          condition: service_healthy
+          restart: true
+
+      environment:
+        HOST: xtraworkdb
+
+networks:
+  xtraworknet:
+            
+        
