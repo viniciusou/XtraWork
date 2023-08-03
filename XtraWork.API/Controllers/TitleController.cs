@@ -9,24 +9,24 @@ namespace XtraWork.API.Controllers
     [Route("titles")]
     public class TitleController : ControllerBase
     {
-        private readonly TitleService _titleService;
+        private readonly ITitleService _titleService;
 
-        public TitleController(TitleService titleService)
+        public TitleController(ITitleService titleService)
         {
             _titleService = titleService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<TitleResponse>>> GetAll()
+        public async Task<ActionResult<List<TitleResponse>>> GetAll(CancellationToken cancellationToken)
         {
-            var response = await _titleService.GetAll();
+            var response = await _titleService.GetAll(cancellationToken);
             return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TitleResponse>> Get(Guid id)
+        public async Task<ActionResult<TitleResponse>> Get(Guid id, CancellationToken cancellationToken)
         {
-            var response = await _titleService.Get(id);
+            var response = await _titleService.Get(id, cancellationToken);
             return Ok(response);
         }
 
@@ -38,9 +38,9 @@ namespace XtraWork.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<TitleResponse>> Update(Guid id, [FromBody] TitleRequest request)
+        public async Task<ActionResult<TitleResponse>> Update(Guid id, [FromBody] TitleRequest request, CancellationToken cancellationToken)
         {
-            var response = await _titleService.Update(id, request);
+            var response = await _titleService.Update(id, request, cancellationToken);
             return Ok(response);
         }
 

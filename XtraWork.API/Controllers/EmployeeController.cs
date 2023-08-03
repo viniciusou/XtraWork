@@ -9,24 +9,24 @@ namespace XtraWork.API.Controllers
     [Route("employees")]
     public class EmployeeController : ControllerBase
     {
-        private readonly EmployeeService _employeeService;
+        private readonly IEmployeeService _employeeService;
         
-        public EmployeeController(EmployeeService employeeService)
+        public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<EmployeeResponse>>> GetAll()
+        public async Task<ActionResult<List<EmployeeResponse>>> GetAll(CancellationToken cancellationToken)
         {
-            var response = await _employeeService.GetAll();
+            var response = await _employeeService.GetAll(cancellationToken);
             return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<EmployeeResponse>> Get(Guid id)
+        public async Task<ActionResult<EmployeeResponse>> Get(Guid id, CancellationToken cancellationToken)
         {
-            var response = await _employeeService.Get(id);
+            var response = await _employeeService.Get(id, cancellationToken);
             return Ok(response);
         }
 
@@ -38,16 +38,16 @@ namespace XtraWork.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<EmployeeResponse>> Create([FromBody] EmployeeRequest request)
+        public async Task<ActionResult<EmployeeResponse>> Create([FromBody] EmployeeRequest request, CancellationToken cancellationToken)
         {
-            var response = await _employeeService.Create(request);
+            var response = await _employeeService.Create(request, cancellationToken);
             return StatusCode(StatusCodes.Status201Created, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<EmployeeResponse>> Update(Guid id, [FromBody] EmployeeRequest request)
+        public async Task<ActionResult<EmployeeResponse>> Update(Guid id, [FromBody] EmployeeRequest request, CancellationToken cancellationToken)
         {
-            var response = await _employeeService.Update(id, request);
+            var response = await _employeeService.Update(id, request, cancellationToken);
             return Ok(response);
         }
 
