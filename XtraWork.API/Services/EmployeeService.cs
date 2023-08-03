@@ -7,16 +7,58 @@ namespace XtraWork.API.Services
 {
     public class EmployeeService
     {
-        private readonly EmployeeRepository _employeeRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
-        public EmployeeService(EmployeeRepository employeeRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository)
         {
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<List<EmployeeResponse>> GetAll()
+        public async Task<EmployeeResponse> Create(EmployeeRequest request, CancellationToken cancellationToken)
         {
-            var employees = await _employeeRepository.GetAll();
+            if (string.IsNullOrWhiteSpace(request.FirstName))
+            {
+                throw new Exception("FirstName cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.LastName))
+            {
+                throw new Exception("LastName cannot be empty.");
+            }
+
+            if (request.BirthDate == default)
+            {
+                throw new Exception("Birthdate cannot be empty.");
+            }
+
+            if (request.TitleId == default)
+            {
+                throw new Exception("TitleId cannot be empty.");
+            }
+
+            var employee = new Employee {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                BirthDate = request.BirthDate,
+                Gender = request.Gender,
+                TitleId = request.TitleId
+            };
+
+            await _employeeRepository.Create(employee);
+
+            var response = await Get(employee.Id, cancellationToken);
+
+            return response;
+        }
+
+        public async Task Delete(Guid id)
+        {
+            await _employeeRepository.Delete(id);
+        }
+
+        public async Task<List<EmployeeResponse>> GetAll(CancellationToken cancellationToken)
+        {
+            var employees = await _employeeRepository.GetAll(cancellationToken);
 
             var response = employees.Select(employee => new EmployeeResponse
             {
@@ -32,9 +74,9 @@ namespace XtraWork.API.Services
             return response;
         }
 
-        public async Task<EmployeeResponse> Get(Guid id)
+        public async Task<EmployeeResponse> Get(Guid id, CancellationToken cancellationToken)
         {
-            var employee = await _employeeRepository.Get(id);
+            var employee = await _employeeRepository.Get(id, cancellationToken);
 
             var response = new EmployeeResponse
             {
@@ -69,44 +111,7 @@ namespace XtraWork.API.Services
             return response;
         }
 
-        public async Task<EmployeeResponse> Create(EmployeeRequest request)
-        {
-            if (string.IsNullOrWhiteSpace(request.FirstName))
-            {
-                throw new Exception("FirstName cannot be empty.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.LastName))
-            {
-                throw new Exception("LastName cannot be empty.");
-            }
-
-            if (request.BirthDate == default)
-            {
-                throw new Exception("Birthdate cannot be empty.");
-            }
-
-            if (request.TitleId == default)
-            {
-                throw new Exception("TitleId cannot be empty.");
-            }
-
-            var employee = new Employee {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                BirthDate = request.BirthDate,
-                Gender = request.Gender,
-                TitleId = request.TitleId
-            };
-
-            await _employeeRepository.Create(employee);
-
-            var response = await Get(employee.Id);
-
-            return response;
-        }
-
-        public async Task<EmployeeResponse> Update(Guid id, EmployeeRequest request)
+        public async Task<EmployeeResponse> Update(Guid id, EmployeeRequest request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(request.FirstName))
             {
@@ -129,7 +134,7 @@ namespace XtraWork.API.Services
             }
 
 
-            var employee = await _employeeRepository.Get(id);
+            var employee = await _employeeRepository.Get(id, cancellationToken);
 
             employee.FirstName = request.FirstName;
             employee.LastName = request.LastName;
@@ -139,14 +144,9 @@ namespace XtraWork.API.Services
 
             await _employeeRepository.Update(employee);
 
-            var response = await Get(id);
+            var response = await Get(id, cancellationToken);
 
             return response;
-        }
-
-        public async Task Delete(Guid id)
-        {
-            await _employeeRepository.Delete(id);
         }
     }
 }

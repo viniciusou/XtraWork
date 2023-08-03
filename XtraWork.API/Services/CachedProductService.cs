@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
 using XtraWork.API.Entities;
-using XtraWork.API.Repositories;
 
 namespace XtraWork.API.Services
 {

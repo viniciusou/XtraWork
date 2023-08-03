@@ -5,18 +5,18 @@ using XtraWork.API.Responses;
 
 namespace XtraWork.API.Services
 {
-    public class TitleService
+    public class TitleService : ITitleService
     {
-        private readonly TitleRepository _titleRepository;
+        private readonly ITitleRepository _titleRepository;
 
-        public TitleService(TitleRepository titleRepository)
+        public TitleService(ITitleRepository titleRepository)
         {
             _titleRepository = titleRepository;
         }
 
-        public async Task<TitleResponse> Get(Guid id)
+        public async Task<TitleResponse> Get(Guid id, CancellationToken cancellationToken)
         {
-            var title = await _titleRepository.Get(id);
+            var title = await _titleRepository.Get(id, cancellationToken);
 
             if (title == null)
                 return null;
@@ -30,9 +30,9 @@ namespace XtraWork.API.Services
             return response;
         }
 
-        public async Task<List<TitleResponse>> GetAll()
+        public async Task<List<TitleResponse>> GetAll(CancellationToken cancellationToken)
         {
-            var titles = await _titleRepository.GetAll();
+            var titles = await _titleRepository.GetAll(cancellationToken);
 
             var response = titles.Select(title => new TitleResponse
             {
@@ -59,9 +59,9 @@ namespace XtraWork.API.Services
             };
         }
 
-        public async Task<TitleResponse> Update(Guid id, TitleRequest request)
+        public async Task<TitleResponse> Update(Guid id, TitleRequest request, CancellationToken cancellationToken)
         {
-            var title = await _titleRepository.Get(id);
+            var title = await _titleRepository.Get(id, cancellationToken);
 
             title.Description = request.Description;
 

@@ -6,10 +6,10 @@ namespace XtraWork.API.Services
 {
     public class ProductService : IProductService
     {
-        private readonly ProductRepository _productRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IMemoryCache _memoryCache;
 
-        public ProductService(ProductRepository productRepository, IMemoryCache memoryCache)
+        public ProductService(IProductRepository productRepository, IMemoryCache memoryCache)
         {
             _productRepository = productRepository;
             _memoryCache = memoryCache;
