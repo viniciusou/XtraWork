@@ -1,8 +1,7 @@
 namespace XtraWork.API.Entities
 {
-    public class Title
+    public class Title : BaseEntity
     {
-        public Guid Id { get; set; }
         public string Description { get; set; }
     }
 }
