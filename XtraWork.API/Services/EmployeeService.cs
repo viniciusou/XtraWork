@@ -5,7 +5,7 @@ using XtraWork.API.Responses;
 
 namespace XtraWork.API.Services
 {
-    public class EmployeeService
+    public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
 
