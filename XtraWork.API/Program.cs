@@ -11,12 +11,12 @@ var connectionString = builder.Configuration.GetConnectionString("XtraWork");
 builder.Services.AddDbContext<XtraWorkContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
-builder.Services.AddScoped<TitleRepository>();
-builder.Services.AddScoped<EmployeeRepository>();
-builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<ITitleRepository, TitleRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
-builder.Services.AddScoped<TitleService>();
-builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<ITitleService, TitleService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.Decorate<IProductService, CachedProductService>();
 
