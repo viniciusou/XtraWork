@@ -3,29 +3,24 @@ using XtraWork.API.Entities;
 
 namespace XtraWork.API.Repositories
 {
-    public class EmployeeRepository
+    public class EmployeeRepository : BaseRepository<Employee>
     {
-        private readonly XtraWorkContext _context;
+        public EmployeeRepository(XtraWorkContext context) : base(context) { }
 
-        public EmployeeRepository(XtraWorkContext context)
+        public override async Task<Employee> Get(Guid id, CancellationToken cancellationToken)
         {
-            _context = context;
+            return await _context.Employees
+                .Include(x => x.Title)
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task<List<Employee>> GetAll()
+        public override async Task<List<Employee>> GetAll(CancellationToken cancellationToken)
         {
             return await _context.Employees
                 .Include(x => x.Title)
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)
-                .ToListAsync();
-        }
-
-        public async Task<Employee> Get(Guid id)
-        {
-            return await _context.Employees
-                .Include(x => x.Title)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<List<Employee>> Search(string keyword)
@@ -36,28 +31,6 @@ namespace XtraWork.API.Repositories
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)
                 .ToListAsync();
-        }
-
-        public async Task<Employee> Create(Employee employee)
-        {
-            employee.Id = Guid.NewGuid();
-            _context.Add(employee);
-            await _context.SaveChangesAsync();
-            return employee;
-        }
-
-        public async Task<Employee> Update(Employee employee)
-        {
-            _context.Update(employee);
-            await _context.SaveChangesAsync();
-            return employee;
-        }
-
-        public async Task Delete(Guid id)
-        {
-            var employee = await _context.Employees.FindAsync(id);
-            _context.Remove(employee);
-            await _context.SaveChangesAsync();
         }
     }
 }

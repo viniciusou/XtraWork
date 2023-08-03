@@ -3,16 +3,11 @@ using XtraWork.API.Entities;
 
 namespace XtraWork.API.Repositories
 {
-    public class ProductRepository
+    public class ProductRepository : BaseRepository<Product>
     {
-        private readonly XtraWorkContext _context;
+        public ProductRepository(XtraWorkContext context) : base(context) { }
 
-        public ProductRepository(XtraWorkContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<Product>> GetAll(CancellationToken cancellationToken)
+        public override async Task<List<Product>> GetAll(CancellationToken cancellationToken)
         {
             return await _context.Products
                 .OrderBy(x => x.Name)
