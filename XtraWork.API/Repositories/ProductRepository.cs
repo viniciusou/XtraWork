@@ -3,7 +3,7 @@ using XtraWork.API.Entities;
 
 namespace XtraWork.API.Repositories
 {
-    public class ProductRepository : BaseRepository<Product>
+    public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         public ProductRepository(XtraWorkContext context) : base(context) { }
 

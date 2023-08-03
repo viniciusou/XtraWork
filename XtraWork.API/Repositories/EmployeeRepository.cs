@@ -3,7 +3,7 @@ using XtraWork.API.Entities;
 
 namespace XtraWork.API.Repositories
 {
-    public class EmployeeRepository : BaseRepository<Employee>
+    public class EmployeeRepository : BaseRepository<Employee>, IEmployeeRepository
     {
         public EmployeeRepository(XtraWorkContext context) : base(context) { }
 
