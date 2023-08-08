@@ -24,4 +24,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\XtraWork.API\XtraWork.API.csproj" />
+  </ItemGroup>
+
 </Project>
