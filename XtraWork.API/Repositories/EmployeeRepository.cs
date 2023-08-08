@@ -27,7 +27,7 @@ namespace XtraWork.API.Repositories
         {
             return await _context.Employees
                 .Include(x => x.Title)
-                .Where(x => x.FirstName.Contains(keyword) || x.LastName.Contains(keyword))
+                .Where(x => x.FirstName.ToLower().Contains(keyword.ToLower()) || x.LastName.ToLower().Contains(keyword.ToLower()))
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)
                 .ToListAsync();

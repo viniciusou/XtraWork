@@ -31,6 +31,11 @@ namespace XtraWork.API.Services
                 throw new Exception("Birthdate cannot be empty.");
             }
 
+            if (string.IsNullOrWhiteSpace(request.Gender))
+            {
+                throw new Exception("Gender cannot be empty.");
+            }
+
             if (request.TitleId == default)
             {
                 throw new Exception("TitleId cannot be empty.");
@@ -77,6 +82,12 @@ namespace XtraWork.API.Services
         public async Task<EmployeeResponse> Get(Guid id, CancellationToken cancellationToken)
         {
             var employee = await _employeeRepository.Get(id, cancellationToken);
+
+            if (employee == null)
+            {
+                //Todo: log information
+                return null;
+            }
 
             var response = new EmployeeResponse
             {
@@ -126,6 +137,11 @@ namespace XtraWork.API.Services
             if (request.BirthDate == default)
             {
                 throw new Exception("Birthdate cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Gender))
+            {
+                throw new Exception("Gender cannot be empty.");
             }
 
             if (request.TitleId == default)
