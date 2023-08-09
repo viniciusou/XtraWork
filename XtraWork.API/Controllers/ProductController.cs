@@ -15,6 +15,7 @@ namespace XtraWork.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> GetAll(CancellationToken cancellationToken)
         {
             var response = await _productService.GetAll(cancellationToken);
