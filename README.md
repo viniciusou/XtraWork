@@ -23,7 +23,34 @@ Clone the project into your machine. Go to your terminal and cd into `XtraWork.A
 The app can be published to a web server or a cloud server with minimum configuration.
 
 
+## Running the tests
+
+### Unit tests
+
+Go to your terminal and cd into `XtraWork.UnitTests` directory. Run `dotnet test` to execute the unit tests.
+
+### Integration tests
+
+Go to your terminal and cd into `XtraWork.IntegrationTests` directory. Run `dotnet test` to execute the integration tests.
+
+
 ## Built With
 
-* [.NET 7.0](https://dotnet.microsoft.com/) - The back-end framework used
+* [.NET 7.0](https://dotnet.microsoft.com/) - The back-end framework used to create the API
 * [SQL Sever 2022](https://www.microsoft.com/pt-br/sql-server/sql-server-2022) - The database used to persist data
+* [Docker](https://www.docker.com/) - The platform used to build and run the application in containers
+* [Scrutor](https://github.com/khellang/Scrutor) - The package used to register decorator classes in service container
+* [Bogus](https://github.com/bchavez/Bogus) - The package used to generate random fake data for testing purposes
+* [Xunit](https://xunit.net/) - The testing framework used to create unit and integration tests
+* [Moq](https://moq.github.io/moq/) - The mocking framework used to mock data in unit tests
+* [Testcontainers](https://testcontainers.com/) - The framework used to run database instances in docker containers for integration tests
+* [Respawn](https://github.com/jbogard/Respawn) - The database cleaner used in integration tests
+* [FluentAssertions](https://fluentassertions.com/) - The pacakge used to make test assertions more readable. 
+
+
+## Acknowledgments
+
+This project is based on the following content:
+* [Building Web API using ASP.NET](https://juldhais.net/building-web-api-using-asp-net-core-for-dummies-3e0c59881432)
+* [Implementing In-Memory Caching using Decorator Pattern](https://juldhais.net/implementing-in-memory-caching-using-decorator-pattern-in-asp-net-core-10f84dcae70b)
+* [REST API Tutorial - Full Course](https://www.youtube.com/playlist?list=PLUOequmGnXxOgmSDWU7Tl6iQTsOtyjtwU)
