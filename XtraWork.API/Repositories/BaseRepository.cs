@@ -23,6 +23,10 @@ namespace XtraWork.API.Repositories
         public async Task Delete(Guid id)
         {
             var entity = await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (entity == null)
+                return;
+                
             _context.Remove(entity);
             await _context.SaveChangesAsync();
         }

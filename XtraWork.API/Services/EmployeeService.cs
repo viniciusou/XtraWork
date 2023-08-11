@@ -73,7 +73,7 @@ namespace XtraWork.API.Services
                 BirthDate = employee.BirthDate,
                 Gender = employee.Gender,
                 TitleId = employee.TitleId,
-                TitleDescription = employee.Title.Description
+                TitleDescription = employee.TitleDescription
             }).ToList();
 
             return response;
@@ -97,7 +97,7 @@ namespace XtraWork.API.Services
                 BirthDate = employee.BirthDate,
                 Gender = employee.Gender,
                 TitleId = employee.TitleId,
-                TitleDescription = employee.Title.Description
+                TitleDescription = employee.TitleDescription
             };
 
             return response;
@@ -115,7 +115,7 @@ namespace XtraWork.API.Services
                 BirthDate = employee.BirthDate,
                 Gender = employee.Gender,
                 TitleId = employee.TitleId,
-                TitleDescription = employee.Title.Description
+                TitleDescription = employee.TitleDescription
 
             }).ToList();
 
@@ -151,6 +151,9 @@ namespace XtraWork.API.Services
 
 
             var employee = await _employeeRepository.Get(id, cancellationToken);
+
+            if (employee == null)
+                return null;
 
             employee.FirstName = request.FirstName;
             employee.LastName = request.LastName;

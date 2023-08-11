@@ -71,6 +71,7 @@ namespace XtraWork.API.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<EmployeeResponse>> Update(Guid id, [FromBody] EmployeeRequest request, CancellationToken cancellationToken)
         {
@@ -79,6 +80,9 @@ namespace XtraWork.API.Controllers
             try 
             {
                 response = await _employeeService.Update(id, request, cancellationToken);
+
+                if (response == null)
+                    return NotFound();
             }
             catch (Exception ex)
             {
