@@ -10,14 +10,12 @@ namespace XtraWork.API.Repositories
         public override async Task<Employee> Get(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Employees
-                .Include(x => x.Title)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
         public override async Task<List<Employee>> GetAll(CancellationToken cancellationToken)
         {
             return await _context.Employees
-                .Include(x => x.Title)
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)
                 .ToListAsync(cancellationToken);
@@ -26,7 +24,6 @@ namespace XtraWork.API.Repositories
         public async Task<List<Employee>> Search(string keyword)
         {
             return await _context.Employees
-                .Include(x => x.Title)
                 .Where(x => x.FirstName.ToLower().Contains(keyword.ToLower()) || x.LastName.ToLower().Contains(keyword.ToLower()))
                 .OrderBy(x => x.FirstName)
                 .ThenBy(x => x.LastName)

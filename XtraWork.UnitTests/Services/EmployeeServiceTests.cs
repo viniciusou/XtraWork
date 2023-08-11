@@ -138,7 +138,7 @@ namespace XtraWork.UnitTests.Services
                 BirthDate = request.BirthDate,
                 Gender = request.Gender,
                 TitleId = request.TitleId,
-                Title = title
+                TitleDescription = title.Description
             };
 
             _repository.Setup(x => x.Get(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(employee);
@@ -205,7 +205,7 @@ namespace XtraWork.UnitTests.Services
                     BirthDate = DateTime.Today.AddYears(-18),
                     Gender = "Male",
                     TitleId = title.Id,
-                    Title = title
+                    TitleDescription = title.Description
                 },
                 new Employee
                 {
@@ -215,7 +215,7 @@ namespace XtraWork.UnitTests.Services
                     BirthDate = DateTime.Today.AddYears(-18),
                     Gender = "Female",
                     TitleId = title.Id,
-                    Title = title
+                    TitleDescription = title.Description
                 }
             };
             _repository.Setup(x => x.GetAll(It.IsAny<CancellationToken>())).ReturnsAsync(employeeList);
@@ -266,7 +266,7 @@ namespace XtraWork.UnitTests.Services
                 BirthDate = It.IsAny<DateTime>(),
                 Gender = It.IsAny<string>(),
                 TitleId = title.Id,
-                Title = title
+                TitleDescription = title.Description
             };
 
             _repository.Setup(x => x.Get(employeeId, cancellationToken)).ReturnsAsync(employee);
@@ -313,7 +313,7 @@ namespace XtraWork.UnitTests.Services
                     BirthDate = DateTime.Today.AddYears(-18),
                     Gender = "Male",
                     TitleId = title.Id,
-                    Title = title
+                    TitleDescription = title.Description
                 }
             };
             _repository.Setup(x => x.Search(keyword)).ReturnsAsync(employeeList);
@@ -454,7 +454,7 @@ namespace XtraWork.UnitTests.Services
                 BirthDate = request.BirthDate,
                 Gender = request.Gender,
                 TitleId = request.TitleId,
-                Title = title
+                TitleDescription = title.Description
             };
 
             _repository.Setup(x => x.Get(employeeId, It.IsAny<CancellationToken>())).ReturnsAsync(employee);
