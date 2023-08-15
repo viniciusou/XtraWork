@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using XtraWork.API.Requests;
 using XtraWork.API.Responses;
@@ -5,6 +7,7 @@ using XtraWork.API.Services;
 
 namespace XtraWork.API.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("employees")]
     public class EmployeeController : ControllerBase
