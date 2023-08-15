@@ -1,10 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace XtraWork.API.Requests
 {
-    public class UserRegistrationRequest
+    public class UserLoginRequest
     {
-        [EmailAddress]
         public string Email { get; set; }
         public string Password { get; set; }
     }
