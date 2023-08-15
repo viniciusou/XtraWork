@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using XtraWork.API.Entities;
 
 namespace XtraWork.API.Repositories
 {
-    public class XtraWorkContext : DbContext
+    public class XtraWorkContext : IdentityDbContext
     {
         public XtraWorkContext(DbContextOptions<XtraWorkContext> options) : base(options) { }
 
