@@ -39,13 +39,14 @@ Go to your terminal and cd into `XtraWork.IntegrationTests` directory. Run `dotn
 * [.NET 7.0](https://dotnet.microsoft.com/) - The back-end framework used to create the API
 * [SQL Sever 2022](https://www.microsoft.com/pt-br/sql-server/sql-server-2022) - The database used to persist data
 * [Docker](https://www.docker.com/) - The platform used to build and run the application in containers
-* [Scrutor](https://github.com/khellang/Scrutor) - The package used to register decorator classes in service container
-* [Bogus](https://github.com/bchavez/Bogus) - The package used to generate random fake data for testing purposes
+* [Scrutor](https://github.com/khellang/Scrutor) - The library used to register decorator classes in service container
+* [Serilog](https://serilog.net/) - The library used for logging 
+* [Bogus](https://github.com/bchavez/Bogus) - The library used to generate random fake data for testing purposes
 * [Xunit](https://xunit.net/) - The testing framework used to create unit and integration tests
 * [Moq](https://moq.github.io/moq/) - The mocking framework used to mock data in unit tests
 * [Testcontainers](https://testcontainers.com/) - The framework used to run database instances in docker containers for integration tests
 * [Respawn](https://github.com/jbogard/Respawn) - The database cleaner used in integration tests
-* [FluentAssertions](https://fluentassertions.com/) - The pacakge used to make test assertions more readable. 
+* [FluentAssertions](https://fluentassertions.com/) - The library used to make test assertions more readable
 
 
 ## Acknowledgments
