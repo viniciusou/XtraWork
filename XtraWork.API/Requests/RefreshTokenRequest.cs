@@ -1,6 +1,6 @@
-namespace XtraWork.API.Responses
+namespace XtraWork.API.Requests
 {
-    public class AuthSuccessResponse
+    public class RefreshTokenRequest
     {
         public string Token { get; set; }
         public string RefreshToken { get; set; }

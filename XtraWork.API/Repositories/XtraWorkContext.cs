@@ -11,5 +11,6 @@ namespace XtraWork.API.Repositories
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Title> Titles { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
