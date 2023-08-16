@@ -2,7 +2,6 @@ using Moq;
 using XtraWork.API.Entities;
 using XtraWork.API.Repositories;
 using XtraWork.API.Requests;
-using XtraWork.API.Responses;
 using XtraWork.API.Services;
 
 namespace XtraWork.UnitTests.Services
@@ -10,12 +9,14 @@ namespace XtraWork.UnitTests.Services
     public class EmployeeServiceTests
     {
         private readonly Mock<IEmployeeRepository> _repository;
+        private readonly Mock<Serilog.ILogger> _logger;
         private readonly EmployeeService _service;
 
         public EmployeeServiceTests()
         {
             _repository = new Mock<IEmployeeRepository>();
-            _service = new EmployeeService(_repository.Object);
+            _logger = new Mock<Serilog.ILogger>();
+            _service = new EmployeeService(_repository.Object, _logger.Object);
         }
 
         [Fact]
@@ -247,6 +248,23 @@ namespace XtraWork.UnitTests.Services
         }
 
         [Fact]
+        public async Task Get_ShouldLogUnableToFindEmployeeMessage_WhenEmployeeDoesNotExist()
+        {
+            // Arrange
+            var anyEmployeeId = It.IsAny<Guid>();
+            var searchedEmployeeId = Guid.NewGuid();
+            var cancellationToken = It.IsAny<CancellationToken>();
+            _repository.Setup(x => x.Get(anyEmployeeId, cancellationToken)).ReturnsAsync(() => null);
+
+            // Act
+            var response = await _service.Get(searchedEmployeeId, cancellationToken);
+
+            // Assert
+            _logger.Verify(x => x.Information("Unable to find employee with Id: {id}", searchedEmployeeId), Times.Once);
+        }
+
+
+        [Fact]
         public async Task Get_ShouldReturnEmployee_WhenEmployeeExists()
         {
             // Arrange
@@ -277,6 +295,38 @@ namespace XtraWork.UnitTests.Services
             // Assert
             Assert.Equal(employeeId, response.Id);
             Assert.Equal(employeeFirstName, response.FirstName);
+        }
+
+        [Fact]
+        public async Task Get_ShouldLogEmployeeRetrievedMessage_WhenEmployeeExists()
+        {
+            // Arrange
+            var employeeId = Guid.NewGuid();
+            var employeeFirstName = "John";
+            var cancellationToken = It.IsAny<CancellationToken>();
+            var title = new Title
+            {
+                Id = It.IsAny<Guid>(),
+                Description = "description"
+            };
+            var employee = new Employee
+            {
+                Id = employeeId,
+                FirstName = employeeFirstName,
+                LastName = It.IsAny<string>(),
+                BirthDate = It.IsAny<DateTime>(),
+                Gender = It.IsAny<string>(),
+                TitleId = title.Id,
+                TitleDescription = title.Description
+            };
+
+            _repository.Setup(x => x.Get(employeeId, cancellationToken)).ReturnsAsync(employee);
+
+            // Act
+            var response = await _service.Get(employeeId, cancellationToken);
+
+            // Assert
+            _logger.Verify(x => x.Information("Retrieved employee with Id: {id}", employeeId), Times.Once);
         }
 
         [Fact]
