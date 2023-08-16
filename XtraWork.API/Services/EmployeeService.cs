@@ -8,10 +8,12 @@ namespace XtraWork.API.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly Serilog.ILogger _logger;
 
-        public EmployeeService(IEmployeeRepository employeeRepository)
+        public EmployeeService(IEmployeeRepository employeeRepository, Serilog.ILogger logger)
         {
             _employeeRepository = employeeRepository;
+            _logger = logger;
         }
 
         public async Task<EmployeeResponse> Create(EmployeeRequest request, CancellationToken cancellationToken)
@@ -85,7 +87,7 @@ namespace XtraWork.API.Services
 
             if (employee == null)
             {
-                //Todo: log information
+                _logger.Information("Unable to find employee with Id: {id}", id);
                 return null;
             }
 
@@ -100,6 +102,7 @@ namespace XtraWork.API.Services
                 TitleDescription = employee.TitleDescription
             };
 
+            _logger.Information("Retrieved employee with Id: {id}", id);
             return response;
         }
 
