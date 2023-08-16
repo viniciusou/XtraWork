@@ -13,10 +13,13 @@ namespace XtraWork.API.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
-        
-        public EmployeeController(IEmployeeService employeeService)
+        private readonly Serilog.ILogger _logger;
+
+
+        public EmployeeController(IEmployeeService employeeService, Serilog.ILogger logger)
         {
             _employeeService = employeeService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -89,6 +92,7 @@ namespace XtraWork.API.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "Error updating employee");
                 return BadRequest(ex.Message);
             }
 
