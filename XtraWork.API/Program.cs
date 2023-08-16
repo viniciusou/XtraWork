@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using XtraWork.API.Extensions;
 using XtraWork.API.Options;
 using XtraWork.API.Repositories;
@@ -16,6 +17,21 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("XtraWork");
 builder.Services.AddDbContext<XtraWorkContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<XtraWorkContext>();
+
+// Add serilogger service to the container
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+    
+using var log = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Services.AddSingleton<Serilog.ILogger>(log);
+log.Information("Done setting up serilog!");
 
 // Add services to the container.
 builder.Services.AddScoped<ITitleRepository, TitleRepository>();
