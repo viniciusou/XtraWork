@@ -1,4 +1,5 @@
-using Moq;
+using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using XtraWork.API.Entities;
 using XtraWork.API.Repositories;
 using XtraWork.API.Requests;
@@ -8,15 +9,13 @@ namespace XtraWork.UnitTests.Services
 {
     public class EmployeeServiceTests
     {
-        private readonly Mock<IEmployeeRepository> _repository;
-        private readonly Mock<Serilog.ILogger> _logger;
+        private readonly IEmployeeRepository _repository = Substitute.For<IEmployeeRepository>();
+        private readonly Serilog.ILogger _logger = Substitute.For<Serilog.ILogger>();
         private readonly EmployeeService _service;
 
         public EmployeeServiceTests()
         {
-            _repository = new Mock<IEmployeeRepository>();
-            _logger = new Mock<Serilog.ILogger>();
-            _service = new EmployeeService(_repository.Object, _logger.Object);
+            _service = new EmployeeService(_repository, _logger);
         }
 
         [Fact]
@@ -30,7 +29,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "FirstName cannot be empty.";
 
             //Act
-            var response = _service.Create(request, It.IsAny<CancellationToken>());
+            var response = _service.Create(request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -49,7 +48,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "LastName cannot be empty.";
 
             //Act
-            var response = _service.Create(request, It.IsAny<CancellationToken>());
+            var response = _service.Create(request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -68,7 +67,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "Birthdate cannot be empty.";
 
             //Act
-            var response = _service.Create(request, It.IsAny<CancellationToken>());
+            var response = _service.Create(request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -88,7 +87,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "Gender cannot be empty.";
 
             //Act
-            var response = _service.Create(request, It.IsAny<CancellationToken>());
+            var response = _service.Create(request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -109,7 +108,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "TitleId cannot be empty.";
 
             //Act
-            var response = _service.Create(request, It.IsAny<CancellationToken>());
+            var response = _service.Create(request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -142,7 +141,8 @@ namespace XtraWork.UnitTests.Services
                 TitleDescription = title.Description
             };
 
-            _repository.Setup(x => x.Get(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(employee);
+            _repository.Get(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
+            _repository.Create(employee).Returns(employee);
 
             //Act
             var response = await _service.Create(request, CancellationToken.None);
@@ -160,14 +160,12 @@ namespace XtraWork.UnitTests.Services
         {
             //Arrange
             var employeeId = Guid.NewGuid();
-            
 
             //Act
             await _service.Delete(employeeId);
             
             //Assert
-            _repository.Verify(x => x.Delete(employeeId), Times.Exactly(1));
-            
+            await _repository.Received(1).Delete(employeeId);            
         }
 
         [Fact]
@@ -175,7 +173,7 @@ namespace XtraWork.UnitTests.Services
         {
             //Arrange
             var cancellationToken = CancellationToken.None;
-            _repository.Setup(x => x.GetAll(It.IsAny<CancellationToken>())).ReturnsAsync(new List<Employee>());
+            _repository.GetAll(Arg.Any<CancellationToken>()).Returns(new List<Employee>());
             
             //Act
             var response = await _service.GetAll(cancellationToken);
@@ -219,7 +217,7 @@ namespace XtraWork.UnitTests.Services
                     TitleDescription = title.Description
                 }
             };
-            _repository.Setup(x => x.GetAll(It.IsAny<CancellationToken>())).ReturnsAsync(employeeList);
+            _repository.GetAll(Arg.Any<CancellationToken>()).Returns(employeeList);
             
             //Act
             var response = await _service.GetAll(cancellationToken);
@@ -235,34 +233,32 @@ namespace XtraWork.UnitTests.Services
         public async Task Get_ShouldReturnNothing_WhenEmployeeDoesNotExist()
         {
             // Arrange
-            var employeeId = It.IsAny<Guid>();
-            var cancellationToken = It.IsAny<CancellationToken>();
-            _repository.Setup(x => x.Get(employeeId, cancellationToken)).ReturnsAsync(() => null);
+            var employeeId = Arg.Any<Guid>();
+            var cancellationToken = Arg.Any<CancellationToken>();
+            _repository.Get(employeeId, cancellationToken).ReturnsNull();
 
             // Act
             var response = await _service.Get(Guid.NewGuid(), cancellationToken);
 
             // Assert
             Assert.Null(response);
-
         }
 
         [Fact]
         public async Task Get_ShouldLogUnableToFindEmployeeMessage_WhenEmployeeDoesNotExist()
         {
             // Arrange
-            var anyEmployeeId = It.IsAny<Guid>();
+            var anyEmployeeId = Arg.Any<Guid>();
             var searchedEmployeeId = Guid.NewGuid();
-            var cancellationToken = It.IsAny<CancellationToken>();
-            _repository.Setup(x => x.Get(anyEmployeeId, cancellationToken)).ReturnsAsync(() => null);
+            var cancellationToken = Arg.Any<CancellationToken>();
+            _repository.Get(anyEmployeeId, cancellationToken).ReturnsNull();
 
             // Act
             var response = await _service.Get(searchedEmployeeId, cancellationToken);
 
             // Assert
-            _logger.Verify(x => x.Information("Unable to find employee with Id: {id}", searchedEmployeeId), Times.Once);
+            _logger.Received(1).Information("Unable to find employee with Id: {id}", searchedEmployeeId);
         }
-
 
         [Fact]
         public async Task Get_ShouldReturnEmployee_WhenEmployeeExists()
@@ -270,24 +266,24 @@ namespace XtraWork.UnitTests.Services
             // Arrange
             var employeeId = Guid.NewGuid();
             var employeeFirstName = "John";
-            var cancellationToken = It.IsAny<CancellationToken>();
+            var cancellationToken = CancellationToken.None;
             var title = new Title
             {
-                Id = It.IsAny<Guid>(),
+                Id = Guid.NewGuid(),
                 Description = "description"
             };
             var employee = new Employee
             {
                 Id = employeeId,
                 FirstName = employeeFirstName,
-                LastName = It.IsAny<string>(),
-                BirthDate = It.IsAny<DateTime>(),
-                Gender = It.IsAny<string>(),
+                LastName = "Doe",
+                BirthDate = DateTime.Today.AddYears(-18),
+                Gender = "Male",
                 TitleId = title.Id,
                 TitleDescription = title.Description
             };
 
-            _repository.Setup(x => x.Get(employeeId, cancellationToken)).ReturnsAsync(employee);
+            _repository.Get(employeeId, cancellationToken).Returns(employee);
 
             // Act
             var response = await _service.Get(employeeId, cancellationToken);
@@ -303,40 +299,41 @@ namespace XtraWork.UnitTests.Services
             // Arrange
             var employeeId = Guid.NewGuid();
             var employeeFirstName = "John";
-            var cancellationToken = It.IsAny<CancellationToken>();
+            var cancellationToken = CancellationToken.None;
             var title = new Title
             {
-                Id = It.IsAny<Guid>(),
+                Id = Guid.NewGuid(),
                 Description = "description"
             };
             var employee = new Employee
             {
                 Id = employeeId,
                 FirstName = employeeFirstName,
-                LastName = It.IsAny<string>(),
-                BirthDate = It.IsAny<DateTime>(),
-                Gender = It.IsAny<string>(),
+                LastName = "Doe",
+                BirthDate = DateTime.Today.AddYears(-18),
+                Gender = "Male",
                 TitleId = title.Id,
                 TitleDescription = title.Description
             };
 
-            _repository.Setup(x => x.Get(employeeId, cancellationToken)).ReturnsAsync(employee);
+            _repository.Get(employeeId, cancellationToken).Returns(employee);
 
             // Act
             var response = await _service.Get(employeeId, cancellationToken);
 
             // Assert
-            _logger.Verify(x => x.Information("Retrieved employee with Id: {id}", employeeId), Times.Once);
+            _logger.Received(1).Information("Retrieved employee with Id: {id}", employeeId);
         }
 
         [Fact]
         public async Task Search_ShouldReturnEmptyList_WhenThereAreNoEmployeesContainingKeyword()
         {
             //Arrange
-            _repository.Setup(x => x.Search(It.IsAny<string>())).ReturnsAsync(new List<Employee>());
+            var keyword = "jo";
+            _repository.Search(Arg.Any<string>()).Returns(new List<Employee>());
             
             //Act
-            var response = await _service.Search(It.IsAny<string>());
+            var response = await _service.Search(keyword);
             
             //Assert
             Assert.Empty(response);
@@ -366,7 +363,7 @@ namespace XtraWork.UnitTests.Services
                     TitleDescription = title.Description
                 }
             };
-            _repository.Setup(x => x.Search(keyword)).ReturnsAsync(employeeList);
+            _repository.Search(keyword).Returns(employeeList);
             
             //Act
             var response = await _service.Search(keyword);
@@ -389,7 +386,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "FirstName cannot be empty.";
 
             //Act
-            var response = _service.Update(employeeId, request, It.IsAny<CancellationToken>());
+            var response = _service.Update(employeeId, request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -409,7 +406,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "LastName cannot be empty.";
 
             //Act
-            var response = _service.Update(employeeId, request, It.IsAny<CancellationToken>());
+            var response = _service.Update(employeeId, request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -429,7 +426,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "Birthdate cannot be empty.";
 
             //Act
-            var response = _service.Update(employeeId, request, It.IsAny<CancellationToken>());
+            var response = _service.Update(employeeId, request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -450,7 +447,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "Gender cannot be empty.";
 
             //Act
-            var response = _service.Update(employeeId, request, It.IsAny<CancellationToken>());
+            var response = _service.Update(employeeId, request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -472,7 +469,7 @@ namespace XtraWork.UnitTests.Services
             var exceptionMessage = "TitleId cannot be empty.";
 
             //Act
-            var response = _service.Update(employeeId, request, It.IsAny<CancellationToken>());
+            var response = _service.Update(employeeId, request, CancellationToken.None);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => response);
@@ -507,7 +504,7 @@ namespace XtraWork.UnitTests.Services
                 TitleDescription = title.Description
             };
 
-            _repository.Setup(x => x.Get(employeeId, It.IsAny<CancellationToken>())).ReturnsAsync(employee);
+            _repository.Get(employeeId, Arg.Any<CancellationToken>()).Returns(employee);
 
             //Act
             var response = await _service.Update(employeeId, request, CancellationToken.None);
