@@ -43,7 +43,7 @@ Go to your terminal and cd into `XtraWork.IntegrationTests` directory. Run `dotn
 * [Serilog](https://serilog.net/) - The library used for logging 
 * [Bogus](https://github.com/bchavez/Bogus) - The library used to generate random fake data for testing purposes
 * [Xunit](https://xunit.net/) - The testing framework used to create unit and integration tests
-* [Moq](https://moq.github.io/moq/) - The mocking framework used to mock data in unit tests
+* [NSubstitute](https://nsubstitute.github.io/) - The mocking framework used to mock data in unit tests
 * [Testcontainers](https://testcontainers.com/) - The framework used to run database instances in docker containers for integration tests
 * [Respawn](https://github.com/jbogard/Respawn) - The database cleaner used in integration tests
 * [FluentAssertions](https://fluentassertions.com/) - The library used to make test assertions more readable
