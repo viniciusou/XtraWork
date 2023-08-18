@@ -25,6 +25,8 @@ namespace XtraWork.IntegrationTests.Controllers
         public async Task Create_ShouldReturnBadRequest_WhenDataRequestIsMissing()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var titleRequest = new TitleRequest
             {
                 Description = "description"
@@ -52,6 +54,8 @@ namespace XtraWork.IntegrationTests.Controllers
         public async Task Create_ShouldReturnEmployee_WhenDataRequestIsComplete()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var titleRequest = new TitleRequest
             {
                 Description = "description"

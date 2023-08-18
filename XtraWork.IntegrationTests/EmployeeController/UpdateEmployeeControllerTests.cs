@@ -25,6 +25,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Update_ShouldReturnBadRequest_WhenRequestDataIsMissing()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var updateEmployeeId = Guid.NewGuid;
 
             var updateEmployeeRequest = new EmployeeRequest
@@ -47,6 +49,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Update_ShouldReturnNotFound_WhenEmployeeDoesNotExistInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var updateEmployeeId = Guid.NewGuid();
 
             var updateEmployeeRequest = new EmployeeRequest
@@ -69,6 +73,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Update_ShouldReturnOk_WhenEmployeeExistsInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+            
             var titleRequest = new TitleRequest
             {
                 Description = "description"

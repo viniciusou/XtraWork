@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using XtraWork.API.Repositories;
 using XtraWork.API.Requests;
@@ -12,7 +13,7 @@ namespace XtraWork.IntegrationTests
 
         public TestsSeed(IntegrationTestFactory<Program, XtraWorkContext> factory)
         {
-            _client = factory.CreateClient();
+            _client = factory.HttpClient;
         }
 
         public async Task<TitleResponse> CreateTitleAsync(TitleRequest request)
@@ -25,6 +26,25 @@ namespace XtraWork.IntegrationTests
         {
             var response = await _client.PostAsJsonAsync("employees", request);
             return await response.Content.ReadFromJsonAsync<EmployeeResponse>();
-        }   
+        }
+
+        public async Task AuthenticateAsync()
+        {
+            _client.DefaultRequestHeaders.Authorization = 
+                new AuthenticationHeaderValue("Bearer", await GetJwtAsync());
+        }
+
+        private async Task<string> GetJwtAsync()
+        {
+            var response = await _client.PostAsJsonAsync("register", new UserRegistrationRequest
+            {
+                Email = "test@integration.com",
+                Password = "SomePass1234!"
+            });
+
+            var registrationResponse = await response.Content.ReadFromJsonAsync<AuthSuccessResponse>();
+
+            return registrationResponse.Token;
+        }
     }
 }

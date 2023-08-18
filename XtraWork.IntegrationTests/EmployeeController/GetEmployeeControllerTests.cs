@@ -16,7 +16,7 @@ namespace XtraWork.IntegrationTests.EmployeeController
 
         public GetEmployeeControllerTests(IntegrationTestFactory<Program, XtraWorkContext> factory)
         {
-            _client = factory.CreateClient();
+            _client = factory.HttpClient;
             _resetDatabase = factory.ResetDatabaseAsync;
             _testsSeed = new TestsSeed(factory);
         }
@@ -25,6 +25,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Get_ShouldReturnNotFound_WhenEmployeeDoesNotExistInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var unknownEmployeeId = Guid.NewGuid();
             
             //Act
@@ -38,6 +40,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Get_ShouldReturnEmployee_WhenEmployeeExistsInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var titleRequest = new TitleRequest
             {
                 Description = "description"

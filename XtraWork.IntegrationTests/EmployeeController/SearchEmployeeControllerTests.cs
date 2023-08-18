@@ -25,6 +25,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Search_ShouldReturnNotFound_WhenNoEmployeeIsFoundInDatabaseForKeywordSearched()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var keyword = "unknown";
             
             //Act
@@ -38,6 +40,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Search_ShouldReturnEmployeeList_WhenEmployeesAreFoundInDatabaseForKeywordSearched()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+            
             var keyword = "jo";
 
             var titleRequest = new TitleRequest

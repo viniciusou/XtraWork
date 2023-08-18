@@ -23,6 +23,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Delete_ShouldReturnNoContent_WhenEmployeeDoesNotExistInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var unknownEmployeeId = Guid.NewGuid();
             
             //Act
@@ -36,6 +38,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task Delete_ShouldReturnNoContent_WhenEmployeeExistsInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+            
             var titleRequest = new TitleRequest
             {
                 Description = "description"

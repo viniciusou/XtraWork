@@ -17,7 +17,7 @@ namespace XtraWork.IntegrationTests.EmployeeController
 
         public GetAllEmployeeControllerTests(IntegrationTestFactory<Program, XtraWorkContext> factory)
         {
-            _client = factory.CreateClient();
+            _client = factory.HttpClient;
             _resetDatabase = factory.ResetDatabaseAsync;
             _testsSeed = new TestsSeed(factory);
         }
@@ -26,7 +26,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task GetAll_ShouldReturnEmptyResponse_WhenThereAreNoEmployeesInDatabase()
         {
             //Arrange
-            
+            await _testsSeed.AuthenticateAsync();
+
             //Act
             var response = await _client.GetAsync("employees");
             
@@ -40,6 +41,8 @@ namespace XtraWork.IntegrationTests.EmployeeController
         public async Task GetAll_ShouldReturnEmployeeListResponse_WhenThereAreEmployeesInDatabase()
         {
             //Arrange
+            await _testsSeed.AuthenticateAsync();
+
             var titleRequest = new TitleRequest
             {
                 Description = "description"
