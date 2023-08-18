@@ -130,7 +130,7 @@ namespace XtraWork.UnitTests.Services
             var request = new EmployeeRequest
             {
                 FirstName = "John",
-                LastName = "Doe",
+                LastName = "John",
                 BirthDate = DateTime.Today.AddYears(-18),
                 Gender = "Male",
                 TitleId = Guid.NewGuid()
@@ -149,7 +149,7 @@ namespace XtraWork.UnitTests.Services
                 TitleDescription = title.Description
             };
 
-            _repository.Create(employee).Returns(employee);
+            _repository.Create(Arg.Any<Employee>()).Returns(employee);
 
             //Act
             var response = await _service.Create(request, CancellationToken.None);
@@ -512,6 +512,7 @@ namespace XtraWork.UnitTests.Services
             };
 
             _repository.Get(employeeId, Arg.Any<CancellationToken>()).Returns(employee);
+            _repository.Update(Arg.Any<Employee>()).Returns(employee);
 
             //Act
             var response = await _service.Update(employeeId, request, CancellationToken.None);
