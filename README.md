@@ -40,7 +40,8 @@ Go to your terminal and cd into `XtraWork.IntegrationTests` directory. Run `dotn
 * [SQL Sever 2022](https://www.microsoft.com/pt-br/sql-server/sql-server-2022) - The database used to persist data
 * [Docker](https://www.docker.com/) - The platform used to build and run the application in containers
 * [Scrutor](https://github.com/khellang/Scrutor) - The library used to register decorator classes in service container
-* [Serilog](https://serilog.net/) - The library used for logging 
+* [Serilog](https://serilog.net/) - The library used for logging
+* [Automapper](https://automapper.org/) - The library used for object mapping 
 * [Bogus](https://github.com/bchavez/Bogus) - The library used to generate random fake data for testing purposes
 * [Xunit](https://xunit.net/) - The testing framework used to create unit and integration tests
 * [NSubstitute](https://nsubstitute.github.io/) - The mocking framework used to mock data in unit tests
