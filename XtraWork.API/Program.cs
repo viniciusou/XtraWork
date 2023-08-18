@@ -33,6 +33,8 @@ using var log = new LoggerConfiguration()
 builder.Services.AddSingleton<Serilog.ILogger>(log);
 log.Information("Done setting up serilog!");
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Add services to the container.
 builder.Services.AddScoped<ITitleRepository, TitleRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
@@ -49,10 +51,10 @@ var jwtSettings = new JwtSettings();
 builder.Configuration.Bind(nameof(jwtSettings), jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
 
-
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
+
 
 var tokenValidationParameters = new TokenValidationParameters
 {

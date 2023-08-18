@@ -1,3 +1,4 @@
+using AutoMapper;
 using XtraWork.API.Entities;
 using XtraWork.API.Repositories;
 using XtraWork.API.Requests;
@@ -8,10 +9,12 @@ namespace XtraWork.API.Services
     public class TitleService : ITitleService
     {
         private readonly ITitleRepository _titleRepository;
+        private readonly IMapper _mapper;
 
-        public TitleService(ITitleRepository titleRepository)
+        public TitleService(ITitleRepository titleRepository, IMapper mapper)
         {
             _titleRepository = titleRepository;
+            _mapper = mapper;
         }
 
         public async Task<TitleResponse> Get(Guid id, CancellationToken cancellationToken)
@@ -21,11 +24,7 @@ namespace XtraWork.API.Services
             if (title == null)
                 return null;
 
-            var response = new TitleResponse
-            {
-                Id = title.Id,
-                Description = title.Description
-            };
+            var response = _mapper.Map<TitleResponse>(title);
 
             return response;
         }
@@ -34,29 +33,20 @@ namespace XtraWork.API.Services
         {
             var titles = await _titleRepository.GetAll(cancellationToken);
 
-            var response = titles.Select(title => new TitleResponse
-            {
-                Id = title.Id,
-                Description = title.Description
-            }).ToList();
-
+            var response = _mapper.Map<List<TitleResponse>>(titles);
+            
             return response;
         }
 
         public async Task<TitleResponse> Create(TitleRequest request)
         {
-            var title = new Title
-            {
-                Description = request.Description
-            };
+            var title = _mapper.Map<Title>(request);
 
-            await _titleRepository.Create(title);
+            var createdTitle = await _titleRepository.Create(title);
 
-            return new TitleResponse
-            {
-                Id = title.Id,
-                Description = title.Description
-            };
+            var response = _mapper.Map<TitleResponse>(createdTitle);
+            
+            return response;
         }
 
         public async Task<TitleResponse> Update(Guid id, TitleRequest request, CancellationToken cancellationToken)
@@ -65,13 +55,11 @@ namespace XtraWork.API.Services
 
             title.Description = request.Description;
 
-            await _titleRepository.Update(title);
+            var updatedTitle = await _titleRepository.Update(title);
 
-            return new TitleResponse
-            {
-                Id = title.Id,
-                Description = title.Description
-            };
+            var response = _mapper.Map<TitleResponse>(updatedTitle);
+
+            return response;
         }
 
         public async Task Delete(Guid id)

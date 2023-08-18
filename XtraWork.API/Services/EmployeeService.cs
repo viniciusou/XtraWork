@@ -1,3 +1,4 @@
+using AutoMapper;
 using XtraWork.API.Entities;
 using XtraWork.API.Repositories;
 using XtraWork.API.Requests;
@@ -9,11 +10,13 @@ namespace XtraWork.API.Services
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly Serilog.ILogger _logger;
+        private readonly IMapper _mapper;
 
-        public EmployeeService(IEmployeeRepository employeeRepository, Serilog.ILogger logger)
+        public EmployeeService(IEmployeeRepository employeeRepository, Serilog.ILogger logger, IMapper mapper)
         {
             _employeeRepository = employeeRepository;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<EmployeeResponse> Create(EmployeeRequest request, CancellationToken cancellationToken)
@@ -43,17 +46,11 @@ namespace XtraWork.API.Services
                 throw new Exception("TitleId cannot be empty.");
             }
 
-            var employee = new Employee {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                BirthDate = request.BirthDate,
-                Gender = request.Gender,
-                TitleId = request.TitleId
-            };
+            var employee = _mapper.Map<Employee>(request);
 
-            await _employeeRepository.Create(employee);
+            var createdEmployee =  await _employeeRepository.Create(employee);
 
-            var response = await Get(employee.Id, cancellationToken);
+            var response = _mapper.Map<EmployeeResponse>(createdEmployee);
 
             return response;
         }
@@ -67,17 +64,7 @@ namespace XtraWork.API.Services
         {
             var employees = await _employeeRepository.GetAll(cancellationToken);
 
-            var response = employees.Select(employee => new EmployeeResponse
-            {
-                Id = employee.Id,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                BirthDate = employee.BirthDate,
-                Gender = employee.Gender,
-                TitleId = employee.TitleId,
-                TitleDescription = employee.TitleDescription
-            }).ToList();
-
+            var response = _mapper.Map<List<EmployeeResponse>>(employees);
             return response;
         }
 
@@ -91,16 +78,7 @@ namespace XtraWork.API.Services
                 return null;
             }
 
-            var response = new EmployeeResponse
-            {
-                Id = employee.Id,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                BirthDate = employee.BirthDate,
-                Gender = employee.Gender,
-                TitleId = employee.TitleId,
-                TitleDescription = employee.TitleDescription
-            };
+            var response = _mapper.Map<EmployeeResponse>(employee);
 
             _logger.Information("Retrieved employee with Id: {id}", id);
             return response;
@@ -110,17 +88,7 @@ namespace XtraWork.API.Services
         {
             var employees = await _employeeRepository.Search(keyword);
 
-            var response = employees.Select(employee => new EmployeeResponse
-            {
-                Id = employee.Id,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                BirthDate = employee.BirthDate,
-                Gender = employee.Gender,
-                TitleId = employee.TitleId,
-                TitleDescription = employee.TitleDescription
-
-            }).ToList();
+            var response = _mapper.Map<List<EmployeeResponse>>(employees);
 
             return response;
         }
@@ -164,10 +132,10 @@ namespace XtraWork.API.Services
             employee.Gender = request.Gender;
             employee.TitleId = request.TitleId;
 
-            await _employeeRepository.Update(employee);
+            var updatedEmployee = await _employeeRepository.Update(employee);
 
-            var response = await Get(id, cancellationToken);
-
+            var response = _mapper.Map<EmployeeResponse>(updatedEmployee);
+            
             return response;
         }
     }

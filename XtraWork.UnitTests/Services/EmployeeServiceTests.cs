@@ -1,6 +1,8 @@
+using AutoMapper;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using XtraWork.API.Entities;
+using XtraWork.API.Helpers;
 using XtraWork.API.Repositories;
 using XtraWork.API.Requests;
 using XtraWork.API.Services;
@@ -15,7 +17,13 @@ namespace XtraWork.UnitTests.Services
 
         public EmployeeServiceTests()
         {
-            _service = new EmployeeService(_repository, _logger);
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfiles());
+            });
+            var _mapper = config.CreateMapper();
+            
+            _service = new EmployeeService(_repository, _logger, _mapper);
         }
 
         [Fact]
@@ -141,7 +149,6 @@ namespace XtraWork.UnitTests.Services
                 TitleDescription = title.Description
             };
 
-            _repository.Get(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
             _repository.Create(employee).Returns(employee);
 
             //Act
@@ -284,7 +291,7 @@ namespace XtraWork.UnitTests.Services
             };
 
             _repository.Get(employeeId, cancellationToken).Returns(employee);
-
+            
             // Act
             var response = await _service.Get(employeeId, cancellationToken);
 
